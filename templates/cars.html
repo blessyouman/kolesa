@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h2>Все объявления о продаже машин</h2>
+
+<form method="GET" class="filter-bar">
+    <div class="form-group">
+        <label>Марка</label>
+        <input type="text" name="brand" value="{{ request.GET.brand }}" placeholder="Например: Toyota">
+    </div>
+    <div class="form-group">
+        <label>Год от</label>
+        <input type="number" name="year_from" value="{{ request.GET.year_from }}" placeholder="2010">
+    </div>
+    <div class="form-group">
+        <label>Год до</label>
+        <input type="number" name="year_to" value="{{ request.GET.year_to }}" placeholder="2026">
+    </div>
+    <div class="form-group">
+        <label>Цена</label>
+        <select name="sort">
+            <option value="">Без сортировки</option>
+            <option value="asc" {% if request.GET.sort == "asc" %}selected{% endif %}>По возрастанию</option>
+            <option value="desc" {% if request.GET.sort == "desc" %}selected{% endif %}>По убыванию</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-secondary" style="width: auto; padding: 10px 20px;">Найти</button>
+</form>
+
+<div class="cars-grid">
+    {% for ad in ads %}
+    <div class="car-card">
+        {% if ad.image_path %}
+            <img src="{% get_static_prefix %}{{ ad.image_path }}" alt="Фото авто">
+        {% else %}
+            <img src="{% static 'images/car-placeholder.png' %}" alt="Нет фото">
+        {% endif %}
+        <div class="car-info">
+            <div class="car-price">{{ ad.price }} ₸</div>
+            <div class="car-title">{{ ad.brand }} {{ ad.model }}</div>
+            <div>Год выпуска: <strong>{{ ad.year }}</strong></div>
+            <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">{{ ad.description }}</div>
+            <div style="margin-top: auto; padding-top: 10px; border-top: 1px solid #eee; font-weight: bold; color: #2c3e50;">
+                📞 {{ ad.phone }}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Активных объявлений не найдено.</p>
+    {% endfor %}
+</div>
+{% endblock %}
